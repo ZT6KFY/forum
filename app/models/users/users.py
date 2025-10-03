@@ -37,15 +37,15 @@ class Users(Base):
     is_banned: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     posts = relationship(
-        "Posts", back_populates="users", cascade="all, delete-orphan", lazy="joined"
+        "Posts", back_populates="user", cascade="all, delete-orphan", lazy="select"
     )
     post_votes = relationship(
-        "PostsVotes",
-        back_populates="users",
+        "PostVotes",
+        back_populates="user",
         cascade="all, delete-orphan",
-        lazy="joined",
+        lazy="select",
     )
     admin_logs = relationship(
-        "AdminLogs", back_populates="user", cascade="all, delete-orphan", lazy="joined"
+        "AdminLogs", back_populates="user", cascade="all, delete-orphan", lazy="select"
     )
     threads = relationship("Threads", back_populates="user", lazy="select")

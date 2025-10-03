@@ -9,12 +9,9 @@ from app.schemas.CoreModel import CoreModel
 class UserBase(CoreModel):
     username: str = Field(..., description="Username")
     email: str = Field(..., description="Email address")
-    password: str = Field(..., description="Password")
 
 
 class UserCreate(UserBase):
-    username: str = Field(..., description="Username")
-    email: str = Field(..., description="Email address")
     password: str = Field(..., description="Password")
     # username, email, password
 

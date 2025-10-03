@@ -34,5 +34,5 @@ class Posts(Base):
     user = relationship("Users", back_populates="posts", lazy="joined")
 
     post_votes = relationship(
-        "PostVotes", back_populates="post", cascade="all, delete-orphan", lazy="joined"
+        "PostVotes", back_populates="post", cascade="all, delete-orphan", lazy="select"
     )
