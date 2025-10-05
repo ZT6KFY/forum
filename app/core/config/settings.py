@@ -1,6 +1,5 @@
-from typing import Optional, Union
+from typing import Optional
 
-from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import PostgresDsn, field_validator
 from pydantic import ValidationInfo
@@ -19,7 +18,7 @@ class Settings(BaseSettings):
     @classmethod
     def assemble_db_connection(
         cls, v: Optional[str], values: ValidationInfo
-    ) -> Union[str, MultiHostUrl]:
+    ) -> str | PostgresDsn:
         if v is not None:
             return v
         required_fields = {

@@ -13,19 +13,14 @@ router = APIRouter()
 
 @router.get("", response_model=List[schemas.UserInfo])
 async def get_users(db: AsyncSession = Depends(get_db)):
-    res = await repositories.user_repository.get_users(db)
+    res = await repositories.user_repository.get_all(db)
     return res
 
 
 @router.get("/{user_sid}", response_model=schemas.UserInfo)
 async def get_user_by_sid(user_sid: UUID = Path(), db: AsyncSession = Depends(get_db)):
-    user = repositories.user_repository.get_by_sid(db, sid=user_sid)
+    user = await repositories.user_repository.get_by_sid(db, sid=user_sid)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
     return user
-
-
-@router.get("/{user_sid}/threads")
-async def get_user_threads(user_sid: UUID = Path(), db: AsyncSession = Depends(get_db)):
-    pass
