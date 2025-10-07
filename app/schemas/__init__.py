@@ -21,6 +21,27 @@ from .post_votes.post_votes import (
     PostVotesInfo as PostVotesInfo,
 )
 
+from .posts.posts import (
+    PostBase as PostBase,
+    PostCreate as PostCreate,
+    PostUpdate as PostUpdate,
+    PostInfo as PostInfo,
+)
+
+from .threads.threads import (
+    ThreadBase as ThreadBase,
+    ThreadCreate as ThreadCreate,
+    ThreadUpdate as ThreadUpdate,
+    ThreadInfo as ThreadInfo,
+)
+
+from .admin_logs.admin_logs import (
+    AdminLogBase as AdminLogBase,
+    AdminLogCreate as AdminLogCreate,
+    AdminLogUpdate as AdminLogUpdate,
+    AdminLogInfo as AdminLogInfo,
+)
+
 __all__ = [
     # Users
     "UserBase",
@@ -36,5 +57,20 @@ __all__ = [
     "PostVotesBase",
     "PostVotesCreate",
     "PostVotesUpdate",
-    "PostVotesnfo",
+    "PostVotesInfo",
+    # Posts
+    "PostBase",
+    "PostCreate",
+    "PostUpdate",
+    "PostInfo",
+    # Threads
+    "ThreadBase",
+    "ThreadCreate",
+    "ThreadUpdate",
+    "ThreadInfo",
+    # AdminLogs
+    "AdminLogBase",
+    "AdminLogCreate",
+    "AdminLogUpdate",
+    "AdminLogInfo",
 ]

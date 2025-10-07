@@ -9,3 +9,15 @@ from .boards.boards import (
 from .post_votes.post_votes import (
     post_votes_repository as post_votes_repository,
 )
+
+from .posts.posts import (
+    post_repository as post_repository,
+)
+
+from .threads.threads import (
+    thread_repository as thread_repository,
+)
+
+from .admin_logs.admin_logs import (
+    admin_log_repository as admin_log_repository,
+)
