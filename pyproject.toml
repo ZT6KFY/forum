@@ -1,33 +1,28 @@
-[project]
+[tool.poetry]
 name = "forum"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Your Name",email = "you@example.com"}
-]
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "uvicorn (>=0.36.0,<0.37.0)",
-    "fastapi (>=0.116.2,<0.117.0)",
-    "sqlalchemy (>=2.0.43,<3.0.0)",
-    "psycopg2-binary (>=2.9.10,<3.0.0)",
-    "passlib[bcrypt] (>=1.7.4,<2.0.0)",
-    "python-jose[cryptography] (>=3.5.0,<4.0.0)",
-    "python-dotenv (>=1.1.1,<2.0.0)",
-    "asyncpg (>=0.30.0,<0.31.0)",
-    "pydantic-settings (>=2.11.0,<3.0.0)",
-    "alembic (>=1.16.5,<2.0.0)",
-    "faker (>=37.8.0,<38.0.0)",
-]
+authors = ["Your Name <you@example.com>"]
+packages = [{ include = "app" }]
 
+[tool.poetry.dependencies]
+python = ">=3.12"
+uvicorn = ">=0.36.0,<0.37.0"
+fastapi = ">=0.116.2,<0.117.0"
+sqlalchemy = ">=2.0.43,<3.0.0"
+psycopg2-binary = ">=2.9.10,<3.0.0"
+passlib = {version=">=1.7.4,<2.0.0", extras=["bcrypt"]}
+python-jose = {version=">=3.5.0,<4.0.0", extras=["cryptography"]}
+python-dotenv = ">=1.1.1,<2.0.0"
+asyncpg = ">=0.30.0,<0.31.0"
+pydantic-settings = ">=2.11.0,<3.0.0"
+alembic = ">=1.16.5,<2.0.0"
+faker = ">=37.8.0,<38.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = ">=4.3.0,<5.0.0"
+ruff = ">=0.13.1,<0.14.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[dependency-groups]
-dev = [
-    "pre-commit (>=4.3.0,<5.0.0)",
-    "ruff (>=0.13.1,<0.14.0)"
-]
