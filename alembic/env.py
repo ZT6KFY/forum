@@ -4,9 +4,7 @@ from alembic import context
 import os
 import sys
 
-# alembic/env.py
 
-# Добавляем корневую директорию проекта в Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from app.core.config.settings import settings

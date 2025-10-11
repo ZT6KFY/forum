@@ -14,6 +14,14 @@ from .boards.boards import (
     BoardInfo as BoardInfo,
 )
 
+from .boards.board_category import (
+    BoardCategoryBase as BoardCategoryBase,
+    BoardCategoryCreate as BoardCategoryCreate,
+    BoardCategoryUpdate as BoardCategoryUpdate,
+    BoardCategoryInfo as BoardCategoryInfo,
+)
+
+
 from .post_votes.post_votes import (
     PostVotesBase as PostVotesBase,
     PostVotesCreate as PostVotesCreate,
@@ -53,6 +61,11 @@ __all__ = [
     "BoardCreate",
     "BoardUpdate",
     "BoardInfo",
+    # BoardCategory
+    "BoardCategoryBase",
+    "BoardCategoryCreate",
+    "BoardCategoryUpdate",
+    "BoardCategoryInfo",
     # PostVotes
     "PostVotesBase",
     "PostVotesCreate",

@@ -21,3 +21,7 @@ from .threads.threads import (
 from .admin_logs.admin_logs import (
     admin_log_repository as admin_log_repository,
 )
+
+from .boards.board_categories import (
+    board_category_repository as board_category_repository,
+)

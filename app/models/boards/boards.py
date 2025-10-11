@@ -25,3 +25,10 @@ class Boards(Base):
     threads = relationship(
         "Threads", back_populates="board", cascade="all, delete-orphan", lazy="select"
     )
+
+    board_category = relationship(
+        "BoardCategories",
+        back_populates="boards",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
