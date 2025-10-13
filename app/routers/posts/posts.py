@@ -26,3 +26,10 @@ async def get_post_by_sid(
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     return post
+
+
+@router.post("", response_model=schemas.PostInfo)
+async def create_post(
+    post_data: schemas.PostCreate, db: AsyncSession = Depends(get_db)
+):
+    return await repositories.post_repository.create(db, post_data)
