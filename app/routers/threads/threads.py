@@ -25,3 +25,10 @@ async def get_thread_by_sid(
     if not thread:
         raise HTTPException(status_code=404, detail="Thread not found")
     return thread
+
+
+@router.post("", response_model=schemas.ThreadInfo)
+async def create_thread(
+    post_data: schemas.ThreadCreate, db: AsyncSession = Depends(get_db)
+):
+    return await repositories.thread_repository.create(db, post_data)
