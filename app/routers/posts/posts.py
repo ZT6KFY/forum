@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Path, HTTPException, Depends
+from fastapi import APIRouter, Path, HTTPException, Depends, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import repositories
@@ -33,3 +33,16 @@ async def create_post(
     post_data: schemas.PostCreate, db: AsyncSession = Depends(get_db)
 ):
     return await repositories.post_repository.create(db, post_data)
+
+
+@router.put("/{post_sid}", response_model=schemas.PostInfo)
+async def update_post(
+    post_sid: UUID = Path(),
+    post_data: schemas.PostUpdate = Body(...),
+    db: AsyncSession = Depends(get_db),
+):
+    post = await repositories.post_repository.get_by_sid(db, sid=post_sid)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    return await repositories.post_repository.update(db, db_obj=post, schema=post_data)
