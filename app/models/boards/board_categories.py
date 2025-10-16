@@ -1,8 +1,4 @@
-from uuid import UUID
-
-
-from sqlalchemy import String, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database.base_model import Base
@@ -20,15 +16,9 @@ class BoardCategories(Base):
         comment="Title of the board category",
     )
 
-    board_sid: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True),
-        ForeignKey("boards.boards.sid", ondelete="SET NULL"),
-        nullable=True,
-        comment="Board ID",
-    )
-
     boards = relationship(
         "Boards",
         back_populates="board_category",
+        cascade="all, delete-orphan",
         lazy="select",
     )

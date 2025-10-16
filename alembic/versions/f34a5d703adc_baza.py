@@ -28,27 +28,11 @@ def upgrade() -> None:
     op.execute("CREATE SCHEMA IF NOT EXISTS posts")
     op.execute("CREATE SCHEMA IF NOT EXISTS threads")
     op.execute("CREATE SCHEMA IF NOT EXISTS users")
-    op.create_table(
-        "boards",
-        sa.Column("name", sa.String(), nullable=False, comment="Name of the board"),
-        sa.Column(
-            "description",
-            sa.String(),
-            nullable=False,
-            comment="Description of the board",
-        ),
-        sa.Column("sid", sa.UUID(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.PrimaryKeyConstraint("sid"),
-        sa.UniqueConstraint("name"),
-        sa.UniqueConstraint("sid"),
-        schema="boards",
-        comment="Boards table",
-    )
+
+    # Создаем таблицы в правильном порядке зависимостей
+
     op.create_table(
         "users",
-        sa.Column("sid", sa.UUID(), nullable=False),
         sa.Column("username", sa.String(length=50), nullable=False, comment="Username"),
         sa.Column("email", sa.String(), nullable=False, comment="Email address"),
         sa.Column(
@@ -56,6 +40,7 @@ def upgrade() -> None:
         ),
         sa.Column("role", sa.String(length=20), nullable=False),
         sa.Column("is_banned", sa.Boolean(), nullable=False),
+        sa.Column("sid", sa.UUID(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("sid"),
@@ -66,6 +51,21 @@ def upgrade() -> None:
         schema="users",
         comment="User table",
     )
+
+    op.create_table(
+        "board_categories",
+        sa.Column(
+            "title", sa.String(), nullable=False, comment="Title of the board category"
+        ),
+        sa.Column("sid", sa.UUID(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
+        sa.PrimaryKeyConstraint("sid"),
+        sa.UniqueConstraint("sid"),
+        schema="boards",
+        comment="Board categories table",
+    )
+
     op.create_table(
         "admin_logs",
         sa.Column("admin_sid", sa.UUID(), nullable=True, comment="Admin ID"),
@@ -83,6 +83,32 @@ def upgrade() -> None:
         schema="admin_logs",
         comment="Admin logs table",
     )
+
+    op.create_table(
+        "boards",
+        sa.Column(
+            "board_category_sid", sa.UUID(), nullable=True, comment="Board category ID"
+        ),
+        sa.Column("name", sa.String(), nullable=False, comment="Name of the board"),
+        sa.Column(
+            "description",
+            sa.String(),
+            nullable=False,
+            comment="Description of the board",
+        ),
+        sa.Column("sid", sa.UUID(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["board_category_sid"], ["boards.board_categories.sid"], ondelete="SET NULL"
+        ),
+        sa.PrimaryKeyConstraint("sid"),
+        sa.UniqueConstraint("name"),
+        sa.UniqueConstraint("sid"),
+        schema="boards",
+        comment="Boards table",
+    )
+
     op.create_table(
         "threads",
         sa.Column("title", sa.String(), nullable=False, comment="Thread title"),
@@ -106,6 +132,7 @@ def upgrade() -> None:
         schema="threads",
         comment="Threads table",
     )
+
     op.create_table(
         "posts",
         sa.Column("content", sa.String(), nullable=True, comment="Content of the post"),
@@ -123,6 +150,7 @@ def upgrade() -> None:
         schema="posts",
         comment="Post table",
     )
+
     op.create_table(
         "post_votes",
         sa.Column("post_sid", sa.UUID(), nullable=False, comment="Post ID"),
@@ -147,14 +175,15 @@ def downgrade() -> None:
     op.drop_table("post_votes", schema="post_votes")
     op.drop_table("posts", schema="posts")
     op.drop_table("threads", schema="threads")
-    op.drop_table("admin_logs", schema="admin_logs")
-    op.drop_table("users", schema="users")
     op.drop_table("boards", schema="boards")
+    op.drop_table("admin_logs", schema="admin_logs")
+    op.drop_table("board_categories", schema="boards")
+    op.drop_table("users", schema="users")
 
-    op.execute("DROP SCHEMA IF NOT EXISTS admin_logs")
-    op.execute("DROP SCHEMA IF NOT EXISTS boards")
-    op.execute("DROP SCHEMA IF NOT EXISTS post_votes")
-    op.execute("DROP SCHEMA IF NOT EXISTS posts")
-    op.execute("DROP SCHEMA IF NOT EXISTS threads")
-    op.execute("DROP SCHEMA IF NOT EXISTS users")
+    op.execute("DROP SCHEMA IF EXISTS post_votes")
+    op.execute("DROP SCHEMA IF EXISTS posts")
+    op.execute("DROP SCHEMA IF EXISTS threads")
+    op.execute("DROP SCHEMA IF EXISTS admin_logs")
+    op.execute("DROP SCHEMA IF EXISTS boards")
+    op.execute("DROP SCHEMA IF EXISTS users")
     # ### end Alembic commands ###

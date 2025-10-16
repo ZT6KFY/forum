@@ -20,7 +20,7 @@ class AdminLogCreate(AdminLogBase):
     pass
 
 
-class AdminLogUpdate(CoreModel):
+class AdminLogUpdate(AdminLogBase):
     admin_sid: Optional[UUID] = Field(
         None, description="Admin ID (nullable, FK to users.users.sid)"
     )

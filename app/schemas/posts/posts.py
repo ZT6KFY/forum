@@ -19,7 +19,7 @@ class PostCreate(PostBase):
     pass
 
 
-class PostUpdate(CoreModel):
+class PostUpdate(PostBase):
     content: Optional[str] = Field(None, description="Content of the post")
     thread_sid: Optional[UUID] = Field(
         None, description="Thread ID (FK to threads.threads.sid)"

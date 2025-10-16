@@ -20,7 +20,7 @@ class ThreadCreate(ThreadBase):
     pass
 
 
-class ThreadUpdate(CoreModel):
+class ThreadUpdate(ThreadBase):
     title: Optional[str] = Field(None, description="Thread title")
     is_locked: Optional[bool] = Field(None, description="Thread is locked")
     is_pinned: Optional[bool] = Field(None, description="Thread is pinned")

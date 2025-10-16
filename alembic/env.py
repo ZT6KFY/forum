@@ -7,6 +7,7 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
+
 from app.core.config.settings import settings
 from app.core.database.base_model import Base
 

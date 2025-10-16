@@ -11,7 +11,7 @@ class BoardCategoryBase(CoreModel):
 
 
 class BoardCategoryCreate(BoardCategoryBase):
-    board_sid: UUID = Field(..., description="UUID of the related board")
+    pass
 
 
 class BoardCategoryUpdate(BoardCategoryBase):
@@ -21,4 +21,3 @@ class BoardCategoryUpdate(BoardCategoryBase):
 
 class BoardCategoryInfo(BoardCategoryBase):
     sid: UUID = Field(..., description="UUID of the board category")
-    board_sid: UUID = Field(..., description="UUID of the related board")
