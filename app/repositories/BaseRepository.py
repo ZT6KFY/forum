@@ -47,7 +47,8 @@ class BaseRepository(Generic[TModel, TCreateSchema, TUpdateSchema]):
     async def create(self, session: AsyncSession, schema: TCreateSchema) -> TModel:
         obj = self.model(**schema.model_dump())
         session.add(obj)
-        await session.flush()
+        await session.commit()
+        await session.refresh(obj)
         return obj
 
     async def update(
@@ -55,7 +56,10 @@ class BaseRepository(Generic[TModel, TCreateSchema, TUpdateSchema]):
     ) -> TModel:
         for field, value in schema.model_dump(exclude_unset=True).items():
             setattr(db_obj, field, value)
-        await session.flush()
+
+        session.add(db_obj)
+        await session.commit()
+        await session.refresh(db_obj)
         return db_obj
 
     async def delete(self, session: AsyncSession, db_obj: TModel) -> None:
