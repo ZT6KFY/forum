@@ -17,6 +17,15 @@ async def get_posts(db: AsyncSession = Depends(get_db)):
     return res
 
 
+@router.get("/by-thread/{thread_sid}", response_model=List[schemas.PostInfo])
+async def get_posts_by_thread(
+    db: AsyncSession = Depends(get_db),
+    thread_sid: UUID = Path(...),
+):
+    res = await repositories.post_repository.get_by_thread(db, thread_sid)
+    return res
+
+
 @router.get("/{post_sid}", response_model=schemas.PostInfo)
 async def get_post_by_sid(
     post_sid: UUID = Path(..., description="UUID of the post"),
