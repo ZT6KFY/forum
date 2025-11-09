@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Path, HTTPException, Depends, Body
+from fastapi import APIRouter, Path, HTTPException, Depends, Body, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import repositories, schemas
@@ -40,6 +40,13 @@ async def get_thread_by_sid(
 async def create_thread(
     post_data: schemas.ThreadCreate, db: AsyncSession = Depends(get_db)
 ):
+    board = await repositories.board_repository.get_by_sid(db, sid=post_data.board_sid)
+
+    if not board:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="board not found"
+        )
+
     return await repositories.thread_repository.create(db, post_data)
 
 

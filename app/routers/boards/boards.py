@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Path, HTTPException, Depends
+from fastapi import APIRouter, Path, HTTPException, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import repositories
@@ -20,7 +20,7 @@ async def get_boards(db: AsyncSession = Depends(get_db)):
 @router.get(
     "/category/{board_category_sid}",
     response_model=List[schemas.BoardInfo],
-    summary="Get Board By Category",
+    summary="Get Boards By Category",
 )
 async def get_boards_by_category(
     db: AsyncSession = Depends(get_db),
@@ -41,3 +41,20 @@ async def get_board_by_sid(
     if not board:
         raise HTTPException(status_code=404, detail="Board not found")
     return board
+
+
+@router.post("", response_model=schemas.BoardInfo)
+async def create_board(
+    post_data: schemas.BoardCreate, db: AsyncSession = Depends(get_db)
+):
+    board_category = await repositories.board_category_repository.get_by_sid(
+        db, sid=post_data.board_category_sid
+    )
+
+    if not board_category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Сущность: категория доски не найдена",
+        )
+
+    return await repositories.board_repository.create(db, post_data)

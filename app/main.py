@@ -3,7 +3,7 @@ from app.routers import api_router
 from app.core.docs.tags_description import openapi_tags
 
 app = FastAPI(
-    title="QuizGameAPI",
+    title="Forum",
     version="0.1.0",
     description="API for the forum",
     openapi_tags=openapi_tags,

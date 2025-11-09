@@ -9,6 +9,9 @@ from app.schemas.CoreModel import CoreModel
 class BoardBase(CoreModel):
     name: str = Field(..., description="Name of the board")
     description: str = Field(..., description="Description of the board")
+    board_category_sid: UUID = Field(
+        ..., description="Board_category ID (FK to board.board_category.sid)"
+    )
 
 
 class BoardCreate(BoardBase):

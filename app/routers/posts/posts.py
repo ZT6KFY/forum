@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Path, HTTPException, Depends, Body
+from fastapi import APIRouter, Path, HTTPException, Depends, Body, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import repositories
@@ -41,6 +41,15 @@ async def get_post_by_sid(
 async def create_post(
     post_data: schemas.PostCreate, db: AsyncSession = Depends(get_db)
 ):
+    thread = await repositories.thread_repository.get_by_sid(
+        db, sid=post_data.thread_sid
+    )
+
+    if not thread:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="thread not found"
+        )
+
     return await repositories.post_repository.create(db, post_data)
 
 
