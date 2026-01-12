@@ -25,6 +25,15 @@ async def get_threads_by_board(
     return res
 
 
+@router.get("/by-user/{board_sid}", response_model=List[schemas.ThreadInfo])
+async def get_threads_by_user(
+    db: AsyncSession = Depends(get_db),
+    board_sid: UUID = Path(...),
+):
+    res = await repositories.thread_repository.get_by_user(db, board_sid)
+    return res
+
+
 @router.get("/{thread_sid}", response_model=schemas.ThreadInfo)
 async def get_thread_by_sid(
     thread_sid: UUID = Path(..., description="UUID of the thread"),

@@ -17,5 +17,10 @@ class ThreadRepository(BaseRepository[Threads, ThreadCreate, ThreadUpdate]):
         result = await db.execute(stmt)
         return result.scalars().all()
 
+    async def get_by_user(self, db: AsyncSession, user_sid: UUID):
+        stmt = select(Threads).where(Threads.user_sid == user_sid)
+        result = await db.execute(stmt)
+        return result.scalars().all()
+
 
 thread_repository = ThreadRepository(Threads)
