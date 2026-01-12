@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import Literal
 from uuid import UUID
+from datetime import datetime
 
 from pydantic import Field
 
@@ -7,23 +8,22 @@ from app.schemas.CoreModel import CoreModel
 
 
 class PostVotesBase(CoreModel):
-    post_id: UUID = Field(..., description="UUID of the post")
-    user_id: UUID = Field(..., description="UUID of the user who voted")
-    value: int = Field(..., description="Vote value (e.g., +1 or -1)")
+    value: Literal[1, -1] = Field(
+        ..., description="Vote value: 1 (upvote) or -1 (downvote)"
+    )
 
 
 class PostVotesCreate(PostVotesBase):
-    pass
+    post_sid: UUID = Field(..., description="Target Post UUID")
 
 
-class PostVotesUpdate(PostVotesBase):
-    post_id: Optional[UUID] = Field(None, description="UUID of the post")
-    user_id: Optional[UUID] = Field(None, description="UUID of the user who voted")
-    value: Optional[int] = Field(None, description="Vote value (e.g., +1 or -1)")
+class PostVotesUpdate(CoreModel):
+    value: Literal[1, -1] = Field(..., description="New vote value")
 
 
 class PostVotesInfo(PostVotesBase):
-    sid: UUID = Field(..., description="UUID of the post vote")
-    post_id: UUID = Field(..., description="UUID of the post")
-    user_id: UUID = Field(..., description="UUID of the user who voted")
-    value: int = Field(..., description="Vote value (e.g., +1 or -1)")
+    sid: UUID = Field(..., description="Vote UUID")
+    post_sid: UUID = Field(..., description="Post UUID")
+    user_sid: UUID = Field(..., description="User UUID")
+    created_at: datetime
+    updated_at: datetime

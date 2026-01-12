@@ -1,5 +1,6 @@
 from typing import Optional
 from uuid import UUID
+from datetime import datetime
 
 from pydantic import Field
 
@@ -14,10 +15,11 @@ class BoardCategoryCreate(BoardCategoryBase):
     pass
 
 
-class BoardCategoryUpdate(BoardCategoryBase):
+class BoardCategoryUpdate(CoreModel):
     title: Optional[str] = Field(None, description="Title of the board category")
-    board_sid: Optional[UUID] = Field(None, description="UUID of the related board")
 
 
 class BoardCategoryInfo(BoardCategoryBase):
     sid: UUID = Field(..., description="UUID of the board category")
+    created_at: datetime
+    updated_at: datetime

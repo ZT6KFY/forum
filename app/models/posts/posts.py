@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import String, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -15,6 +15,10 @@ class Posts(Base):
 
     content: Mapped[str] = mapped_column(
         String, nullable=True, unique=False, comment="Content of the post"
+    )
+
+    score: Mapped[int] = mapped_column(
+        Integer, nullable=True, unique=False, comment="Score of the post"
     )
 
     thread_sid: Mapped[UUID] = mapped_column(

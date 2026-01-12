@@ -22,6 +22,8 @@ def init_db():
     """Заполняет базу данных фейковыми данными."""
     session = SessionLocal()
 
+    print("🚀 Начинаем заполнение базы данных...")
+
     # === USERS ===
     users_data = []
     for _ in range(10):
@@ -47,10 +49,11 @@ def init_db():
             ),
             u,
         )
+    print(f"✅ Users: {len(users_data)} added")
 
-    # === BOARD CATEGORIES (создаются первыми) ===
+    # === BOARD CATEGORIES ===
     board_categories_data = []
-    for _ in range(3):  # Создадим несколько категорий
+    for _ in range(3):
         board_categories_data.append(
             {
                 "sid": str(uuid.uuid4()),
@@ -69,8 +72,9 @@ def init_db():
             ),
             bc,
         )
+    print(f"✅ Board Categories: {len(board_categories_data)} added")
 
-    # === BOARDS (теперь могут ссылаться на категории) ===
+    # === BOARDS ===
     boards_data = []
     for _ in range(5):
         boards_data.append(
@@ -78,7 +82,6 @@ def init_db():
                 "sid": str(uuid.uuid4()),
                 "name": fake.unique.word()[:20],
                 "description": fake.sentence(),
-                # Случайно выбираем ID одной из созданных категорий
                 "board_category_sid": random.choice(board_categories_data)["sid"],
                 "created_at": now_utc(),
                 "updated_at": now_utc(),
@@ -94,6 +97,7 @@ def init_db():
             ),
             b,
         )
+    print(f"✅ Boards: {len(boards_data)} added")
 
     # === THREADS ===
     threads_data = []
@@ -120,52 +124,71 @@ def init_db():
             ),
             t,
         )
+    print(f"✅ Threads: {len(threads_data)} added")
 
-    # === POSTS ===
+    # === POSTS (Подготовка) ===
     posts_data = []
+    post_sids = []  # Для удобного выбора при генерации голосов
+
     for _ in range(30):
+        p_sid = str(uuid.uuid4())
+        post_sids.append(p_sid)
         posts_data.append(
             {
-                "sid": str(uuid.uuid4()),
+                "sid": p_sid,
                 "content": fake.text(max_nb_chars=200),
                 "thread_sid": random.choice(threads_data)["sid"],
                 "user_sid": random.choice(users_data)["sid"],
+                "score": 0,  # Пока 0, обновим позже
                 "created_at": now_utc(),
                 "updated_at": now_utc(),
             }
         )
-    for p in posts_data:
-        session.execute(
-            text(
-                """
-                INSERT INTO posts.posts (sid, content, thread_sid, user_sid, created_at, updated_at)
-                VALUES (:sid, :content, :thread_sid, :user_sid, :created_at, :updated_at)
-                """
-            ),
-            p,
-        )
 
-    # === POST_VOTES ===
-    # Чтобы избежать дубликатов (один пользователь - один голос за пост),
-    # будем отслеживать уже созданные пары (user_sid, post_sid)
+    # === POST_VOTES (Генерация и подсчет Score) ===
     votes_data = []
     created_votes = set()
-    for _ in range(50):
+
+    # Словарь для подсчета рейтинга: {post_sid: score}
+    post_scores = {p["sid"]: 0 for p in posts_data}
+
+    for _ in range(100):  # Делаем больше голосов, чтобы рейтинг был интересным
         user_sid = random.choice(users_data)["sid"]
-        post_sid = random.choice(posts_data)["sid"]
+        post_sid = random.choice(post_sids)
+
         if (user_sid, post_sid) not in created_votes:
+            value = random.choice([-1, 1])
             votes_data.append(
                 {
                     "sid": str(uuid.uuid4()),
                     "post_sid": post_sid,
                     "user_sid": user_sid,
-                    "value": random.choice([-1, 1]),
+                    "value": value,
                     "created_at": now_utc(),
                     "updated_at": now_utc(),
                 }
             )
             created_votes.add((user_sid, post_sid))
+            # Обновляем счетчик
+            post_scores[post_sid] += value
 
+    # === INSERT POSTS (уже с правильным score) ===
+    for p in posts_data:
+        # Присваиваем посчитанный рейтинг
+        p["score"] = post_scores[p["sid"]]
+
+        session.execute(
+            text(
+                """
+                INSERT INTO posts.posts (sid, content, score, thread_sid, user_sid, created_at, updated_at)
+                VALUES (:sid, :content, :score, :thread_sid, :user_sid, :created_at, :updated_at)
+                """
+            ),
+            p,
+        )
+    print(f"✅ Posts: {len(posts_data)} added (with calculated scores)")
+
+    # === INSERT VOTES ===
     for v in votes_data:
         session.execute(
             text(
@@ -176,10 +199,11 @@ def init_db():
             ),
             v,
         )
+    print(f"✅ Votes: {len(votes_data)} added")
 
     session.commit()
     session.close()
-    print("✅ База данных успешно заполнена фейковыми данными!")
+    print("🎉 База данных успешно заполнена!")
 
 
 if __name__ == "__main__":
