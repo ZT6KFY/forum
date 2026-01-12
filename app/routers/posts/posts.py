@@ -4,9 +4,10 @@ from uuid import UUID
 from fastapi import APIRouter, Path, HTTPException, Depends, Body, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import repositories
+from app import repositories, schemas
 from app.core.deps.deps import get_db
-from app import schemas
+from app.schemas.post_votes.post_votes import PostVotesCreate, VoteResponse
+from app.repositories.post_votes.post_votes import post_votes_repository
 
 router = APIRouter()
 
@@ -64,3 +65,18 @@ async def update_post(
         raise HTTPException(status_code=404, detail="Post not found")
 
     return await repositories.post_repository.update(db, db_obj=post, schema=post_data)
+
+
+@router.post("/{post_sid}/vote", response_model=VoteResponse)
+async def vote_post(
+    post_sid: UUID,
+    vote_in: PostVotesCreate,
+    db: AsyncSession = Depends(get_db),
+):
+    new_score, current_vote = await post_votes_repository.toggle_vote(
+        db=db, post_sid=post_sid, user_sid=vote_in.user_sid, value=vote_in.value
+    )
+
+    return VoteResponse(
+        post_sid=post_sid, new_score=new_score, current_vote=current_vote
+    )

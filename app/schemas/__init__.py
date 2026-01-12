@@ -26,7 +26,7 @@ from .post_votes.post_votes import (
     PostVotesBase as PostVotesBase,
     PostVotesCreate as PostVotesCreate,
     PostVotesUpdate as PostVotesUpdate,
-    PostVotesInfo as PostVotesInfo,
+    # PostVotesInfo as PostVotesInfo,
 )
 
 from .posts.posts import (
@@ -69,8 +69,8 @@ __all__ = [
     # PostVotes
     "PostVotesBase",
     "PostVotesCreate",
-    "PostVotesUpdate",
-    "PostVotesInfo",
+    # "PostVotesUpdate",
+    # "PostVotesInfo",
     # Posts
     "PostBase",
     "PostCreate",

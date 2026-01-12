@@ -1,9 +1,6 @@
-from typing import Literal
 from uuid import UUID
-from datetime import datetime
-
-from pydantic import Field
-
+from typing import Optional, Literal
+from pydantic import BaseModel, Field
 from app.schemas.CoreModel import CoreModel
 
 
@@ -14,16 +11,14 @@ class PostVotesBase(CoreModel):
 
 
 class PostVotesCreate(PostVotesBase):
-    post_sid: UUID = Field(..., description="Target Post UUID")
+    user_sid: UUID = Field(..., description="User UUID (TEMPORARY FOR TESTING)")
 
 
 class PostVotesUpdate(CoreModel):
     value: Literal[1, -1] = Field(..., description="New vote value")
 
 
-class PostVotesInfo(PostVotesBase):
-    sid: UUID = Field(..., description="Vote UUID")
-    post_sid: UUID = Field(..., description="Post UUID")
-    user_sid: UUID = Field(..., description="User UUID")
-    created_at: datetime
-    updated_at: datetime
+class VoteResponse(BaseModel):
+    post_sid: UUID
+    new_score: int
+    current_vote: Optional[int]
