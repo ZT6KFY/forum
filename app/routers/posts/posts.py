@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import repositories, schemas
 from app.core.deps.deps import get_db
-from app.schemas.post_votes.post_votes import PostVotesCreate, VoteResponse
-from app.repositories.post_votes.post_votes import post_votes_repository
+from app.schemas.posts.post_votes import PostVotesCreate, VoteResponse
+from app.repositories.posts.post_votes import post_votes_repository
 
 router = APIRouter()
 

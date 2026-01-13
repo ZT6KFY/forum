@@ -45,6 +45,13 @@ class Users(Base):
         cascade="all, delete-orphan",
         lazy="select",
     )
+
+    thread_votes = relationship(
+        "ThreadVotes",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
     admin_logs = relationship(
         "AdminLogs", back_populates="user", cascade="all, delete-orphan", lazy="select"
     )

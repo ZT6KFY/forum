@@ -6,7 +6,7 @@ from .boards.boards import (
     board_repository as board_repository,
 )
 
-from .post_votes.post_votes import (
+from app.repositories.posts.post_votes import (
     post_votes_repository as post_votes_repository,
 )
 
@@ -16,6 +16,10 @@ from .posts.posts import (
 
 from .threads.threads import (
     thread_repository as thread_repository,
+)
+
+from .threads.thread_votes import (
+    thread_votes_repository as thread_votes_repository,
 )
 
 from .admin_logs.admin_logs import (

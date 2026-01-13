@@ -18,7 +18,12 @@ class Posts(Base):
     )
 
     score: Mapped[int] = mapped_column(
-        Integer, nullable=True, unique=False, comment="Score of the post"
+        Integer,
+        default=0,
+        server_default="0",
+        nullable=False,
+        unique=False,
+        comment="Score of the post",
     )
 
     thread_sid: Mapped[UUID] = mapped_column(

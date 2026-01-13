@@ -22,7 +22,7 @@ from .boards.board_category import (
 )
 
 
-from .post_votes.post_votes import (
+from app.schemas.posts.post_votes import (
     PostVotesBase as PostVotesBase,
     PostVotesCreate as PostVotesCreate,
     PostVotesUpdate as PostVotesUpdate,

@@ -2,7 +2,7 @@ from uuid import UUID
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.post_votes.post_votes import PostVotes
+from app.models.posts.post_votes import PostVotes
 from app.models.posts.posts import Posts
 from app.repositories.BaseRepository import BaseRepository
 from app.schemas import PostVotesCreate, PostVotesUpdate
