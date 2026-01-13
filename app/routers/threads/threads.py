@@ -6,6 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import repositories, schemas
 from app.core.deps.deps import get_db
+from app.repositories import thread_votes_repository
+from app.schemas.threads.thread_votes import VoteResponse, ThreadVotesCreate
 
 router = APIRouter()
 
@@ -71,4 +73,19 @@ async def update_thread(
 
     return await repositories.thread_repository.update(
         db, db_obj=thread, schema=thread_data
+    )
+
+
+@router.post("/{thread_sid}/vote", response_model=VoteResponse)
+async def vote_thread(
+    thread_sid: UUID,
+    vote_in: ThreadVotesCreate,
+    db: AsyncSession = Depends(get_db),
+):
+    new_score, current_vote = await thread_votes_repository.toggle_vote(
+        db=db, thread_sid=thread_sid, user_sid=vote_in.user_sid, value=vote_in.value
+    )
+
+    return VoteResponse(
+        thread_sid=thread_sid, new_score=new_score, current_vote=current_vote
     )
