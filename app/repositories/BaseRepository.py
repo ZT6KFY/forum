@@ -44,8 +44,12 @@ class BaseRepository(Generic[TModel, TCreateSchema, TUpdateSchema]):
         result = await db.execute(stmt)
         return result.unique().scalars().all()
 
-    async def create(self, session: AsyncSession, schema: TCreateSchema) -> TModel:
-        obj = self.model(**schema.model_dump())
+    async def create(
+        self, session: AsyncSession, schema: TCreateSchema | dict
+    ) -> TModel:
+        data = schema.model_dump() if isinstance(schema, BaseModel) else schema
+
+        obj = self.model(**data)
         session.add(obj)
         await session.commit()
         await session.refresh(obj)

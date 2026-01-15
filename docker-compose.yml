@@ -16,7 +16,21 @@ services:
       interval: 2s
       timeout: 2s
       retries: 10
+  redis:
+    image: redis:7-alpine
+    container_name: forum_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"  # Пробрасываем порт, чтобы можно было подключиться локально (например, через Redis Insight)
+    volumes:
+      - redis_data:/data  # Чтобы данные не терялись при перезапуске
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 
 volumes:
   postgres_data:
+  redis_data:

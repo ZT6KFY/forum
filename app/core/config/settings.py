@@ -1,7 +1,7 @@
 from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import PostgresDsn, field_validator
+from pydantic import PostgresDsn, field_validator, RedisDsn
 from pydantic import ValidationInfo
 
 
@@ -13,6 +13,11 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int
 
     DATABASE_URL: Optional[PostgresDsn] = None
+
+    REDIS_URL: RedisDsn
+
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
