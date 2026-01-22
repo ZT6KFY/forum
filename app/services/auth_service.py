@@ -4,7 +4,13 @@ from fastapi import HTTPException, status
 
 from app.core.database.redis import redis_client
 from app.repositories.users.users import user_repository
-from app.utils.security import get_password_hash, verify_password, create_access_token
+from app.utils.security import (
+    get_password_hash,
+    verify_password,
+    create_access_token,
+    decode_token,
+    create_refresh_token,
+)
 from app.schemas.auth.auth import UserRegister, UserLogin
 from app.schemas.auth.token import Token
 
@@ -40,17 +46,44 @@ class AuthService:
     async def _create_tokens(self, user_sid: uuid.UUID) -> Token:
         access_token = create_access_token(user_sid)
 
-        refresh_token = str(uuid.uuid4())
+        refresh_token_str = create_refresh_token(user_sid)
 
         await redis_client.set(
             f"{self.REDIS_PREFIX}:{user_sid}:refresh",
-            refresh_token,
+            refresh_token_str,
             ex=self.REFRESH_EXPIRE,
         )
 
         return Token(
-            access_token=access_token, refresh_token=refresh_token, token_type="bearer"
+            access_token=access_token,
+            refresh_token=refresh_token_str,
+            token_type="bearer",
         )
+
+    async def logout(self, refresh_token: str):
+        payload = decode_token(refresh_token)
+        if not payload:
+            return
+
+        user_sid = payload.get("sub")
+
+        await redis_client.delete(f"user:{user_sid}:refresh")
+
+    async def refresh_token(self, db: AsyncSession, refresh_token: str) -> Token:
+        payload = decode_token(refresh_token)
+        if not payload or payload.get("type") != "refresh":
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        user_sid = payload.get("sub")
+
+        stored_token = await redis_client.get(f"user:{user_sid}:refresh")
+
+        if not stored_token or stored_token != refresh_token:
+            raise HTTPException(
+                status_code=401, detail="Refresh token revoked or invalid"
+            )
+
+        return await self._create_tokens(uuid.UUID(user_sid))
 
 
 auth_service = AuthService()
